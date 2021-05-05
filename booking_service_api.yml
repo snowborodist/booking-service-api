@@ -329,7 +329,6 @@ paths:
       parameters:
         - schema:
             type: integer
-            default: '1'
           in: query
           name: page
           description: ' Номер страницы списка отзывов'
