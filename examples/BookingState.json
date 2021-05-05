@@ -1,0 +1,31 @@
+{
+    "bookingIdentifier" : "409d0818-73bf-4a1f-a23b-81505778c663",
+    "startDate" : "2019-08-24T17:03:22Z",
+    "duration" : 48,
+    "totalPrice" : 26000.00,
+    "additionalServices" : [
+        {
+            "identifier" : "a5f95893-353b-4118-8ab7-46f406fc382c",
+            "photo" : [
+                "https://www.meme-arsenal.com/memes/77cbef6b195b7b35f146f17df723339b.jpg",
+                "http://i.mycdn.me/i?r=AzEPZsRbOZEKgBhR0XGMT1RkNaYdgCNXPZqLheIqtYIYTqaKTM5SRkZCeTgDn6uOyic",
+                "https://a.d-cd.net/941es-960.jpg"
+            ],
+            "name" : "DJ",
+            "description" : "Good DJ for your party!",
+            "totalPrice" : 2000.00,
+            "isChosen" : true
+        },
+        {
+            "identifier" : "596e65fd-141f-4295-824a-09f2f24f9cc8",
+            "photo" : [
+                "https://f11.pmo.ee/MmOaZrzTIrzK4YV2lDhpNwC7GBk=/1370x820/smart/nginx/o/2016/11/09/6055121t1hd5a2.jpg",
+                "https://img.novosti-n.org/upload/ukraine/824889.jpg"
+            ],
+            "name" : "Catering",
+            "description" : "Wish any dish for your mega-party",
+            "totalPrice" : 4000.00,
+            "isChosen" : false
+        }
+    ]
+}

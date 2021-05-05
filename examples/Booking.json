@@ -1,0 +1,35 @@
+{
+    "bookingIdentifier" : "409d0818-73bf-4a1f-a23b-81505778c663",
+    "organizerIdentifier" : "a5f95893-353b-4118-8ab7-46f406fc382c",
+    "place" : {
+        "identifier" : "596e65fd-141f-4295-824a-09f2f24f9cc8",
+        "photo" : [
+            "https://alterainvest.ru/upload/iblock/aa6/aa6c3905844c71e819fc5a4214f4d238.jpg",
+            "https://writegate.ru/wp-content/uploads/2019/07/restoran-ruski.jpg",
+            "https://i.timeout.ru/pix/531719.jpeg"
+        ],
+        "name" : "John's Pizza House",
+        "description" : "Simply the best place to conduct an Italian-style party in New York!",
+        "ratingValue" : 4.9,
+        "price" : 10000.00,
+        "bookingInterval" : 1,
+        "owner" : {
+            "identifier" : "b6f192f3-f0e3-4780-8e74-b18834343630",
+            "name" : "John Cheeser",
+            "contact" : [
+                "phone:+79629860431",
+                "email:johns_place@gmail.com"
+            ]
+        },
+        "openBookingIntervals" : [
+            {
+                "startDate" : "2019-08-24T17:03:22Z",
+                "duration" : "72"
+            },
+            {
+                "startDate" : "2019-08-24T17:03:22Z",
+                "duration" : "48"
+            }
+        ]
+    }
+}
