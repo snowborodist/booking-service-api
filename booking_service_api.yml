@@ -1,0 +1,453 @@
+openapi: 3.1.0
+tags:
+  - name: Booking
+    description: Создание и управление бронированиями
+info:
+  title: Booking Service
+  version: '1.0'
+  description: ''
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/booking/{identifier}':
+    parameters:
+      - schema:
+          type: string
+        name: identifier
+        in: path
+        required: true
+        description: Уникальный идентификатор бронирования
+    get:
+      summary: Бронирование
+      tags:
+        - Booking
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+              examples:
+                John's Pizza Example:
+                  value:
+                    bookingIdentifier: 409d0818-73bf-4a1f-a23b-81505778c663
+                    organizerIdentifier: a5f95893-353b-4118-8ab7-46f406fc382c
+                    place:
+                      identifier: 596e65fd-141f-4295-824a-09f2f24f9cc8
+                      photo:
+                        - 'https://alterainvest.ru/upload/iblock/aa6/aa6c3905844c71e819fc5a4214f4d238.jpg'
+                        - 'https://writegate.ru/wp-content/uploads/2019/07/restoran-ruski.jpg'
+                        - 'https://i.timeout.ru/pix/531719.jpeg'
+                      name: John's Pizza House
+                      description: Simply the best place to conduct an Italian-style party in New York!
+                      ratingValue: 4.9
+                      price: 10000
+                      bookingInterval: 1
+                      owner:
+                        identifier: b6f192f3-f0e3-4780-8e74-b18834343630
+                        name: John Cheeser
+                        contact:
+                          - 'phone:+79629860431'
+                          - 'email:johns_place@gmail.com'
+                      openBookingIntervals:
+                        - startDate: '2021-04-01 00:00:00.000'
+                          duration: '72'
+                        - startDate: '2021-04-10 00:00:00.000'
+                          duration: '48'
+        '404':
+          description: Booking Not Found
+      operationId: get-booking-identifier
+      description: Получение информации о бронировании по его идентификатору
+      security:
+        - OAuth2: []
+      x-internal: false
+      parameters: []
+    delete:
+      summary: ''
+      operationId: delete-booking-identifier
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Booking Not Found
+      description: Удаление бронирования
+      security:
+        - OAuth2: []
+      parameters: []
+      tags:
+        - Booking
+  /booking:
+    post:
+      summary: Бронирование
+      operationId: post-booking
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+              examples:
+                John's Pizza Example:
+                  value:
+                    bookingIdentifier: 409d0818-73bf-4a1f-a23b-81505778c663
+                    organizerIdentifier: a5f95893-353b-4118-8ab7-46f406fc382c
+                    place:
+                      identifier: 596e65fd-141f-4295-824a-09f2f24f9cc8
+                      photo:
+                        - 'https://alterainvest.ru/upload/iblock/aa6/aa6c3905844c71e819fc5a4214f4d238.jpg'
+                        - 'https://writegate.ru/wp-content/uploads/2019/07/restoran-ruski.jpg'
+                        - 'https://i.timeout.ru/pix/531719.jpeg'
+                      name: John's Pizza House
+                      description: Simply the best place to conduct an Italian-style party in New York!
+                      ratingValue: 4.9
+                      price: 10000
+                      bookingInterval: 1
+                      owner:
+                        identifier: b6f192f3-f0e3-4780-8e74-b18834343630
+                        name: John Cheeser
+                        contact:
+                          - 'phone:+79629860431'
+                          - 'email:johns_place@gmail.com'
+                      openBookingIntervals:
+                        - startDate: '2021-04-01 00:00:00.000'
+                          duration: '72'
+                        - startDate: '2021-04-10 00:00:00.000'
+                          duration: '48'
+        '500':
+          description: Internal Server Error
+      description: Создание нового бронирования. В случае успешного выполнения запроса в теле ответа возвращается объект с информацией о созданном бронировании
+      security:
+        - OAuth2: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                placeIdentifier:
+                  type: string
+                  minLength: 1
+                  format: uuid
+                organizerIdentifier:
+                  type: string
+                  minLength: 1
+                  format: uuid
+              required:
+                - placeIdentifier
+                - organizerIdentifier
+            examples:
+              example:
+                value:
+                  placeIdentifier: 04f06287-724f-480e-a49c-4421ff95f6e8
+                  organizerIdentifier: 1de2418c-a6ac-4fc0-9a2d-c7d175e9073d
+        description: 'Для создания нового бронирования необходимо передать в теле запроса уникальные идентификаторы бронируемой площадки и организатора мероприятий, который осуществляет бронирование'
+      tags:
+        - Booking
+  '/booking/{identifier}/state':
+    parameters:
+      - schema:
+          type: string
+        name: identifier
+        in: path
+        required: true
+        description: Уникальный идентификатор бронирования
+    get:
+      summary: Получение состояния бронирования
+      tags:
+        - Booking
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingState'
+              examples:
+                Example:
+                  value:
+                    bookingIdentifier: 409d0818-73bf-4a1f-a23b-81505778c663
+                    startDate: '2021-04-01 16:00:00.000'
+                    duration: 48
+                    totalPrice: 26000
+                    additionalServices:
+                      - identifier: a5f95893-353b-4118-8ab7-46f406fc382c
+                        photo:
+                          - 'https://www.meme-arsenal.com/memes/77cbef6b195b7b35f146f17df723339b.jpg'
+                          - 'http://i.mycdn.me/i?r=AzEPZsRbOZEKgBhR0XGMT1RkNaYdgCNXPZqLheIqtYIYTqaKTM5SRkZCeTgDn6uOyic'
+                          - 'https://a.d-cd.net/941es-960.jpg'
+                        name: DJ
+                        description: Good DJ for your party!
+                        totalPrice: 2000
+                        isChosen: true
+                      - identifier: 596e65fd-141f-4295-824a-09f2f24f9cc8
+                        photo:
+                          - 'https://f11.pmo.ee/MmOaZrzTIrzK4YV2lDhpNwC7GBk=/1370x820/smart/nginx/o/2016/11/09/6055121t1hd5a2.jpg'
+                          - 'https://img.novosti-n.org/upload/ukraine/824889.jpg'
+                        name: Catering
+                        description: Wish any dish for your mega-party
+                        totalPrice: 4000
+                        isChosen: false
+        '404':
+          description: Booking Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-booking-identifier-state
+      description: Получение информации о состоянии бронирования по его уникальному идентификатору
+      security:
+        - OAuth2: []
+    put:
+      summary: Обновление состояния бронирования
+      operationId: put-booking-identifier-state
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingState'
+              examples:
+                Example:
+                  value:
+                    bookingIdentifier: 409d0818-73bf-4a1f-a23b-81505778c663
+                    startDate: '2021-04-01 16:00:00.000'
+                    duration: 48
+                    totalPrice: 26000
+                    additionalServices:
+                      - identifier: a5f95893-353b-4118-8ab7-46f406fc382c
+                        photo:
+                          - 'https://www.meme-arsenal.com/memes/77cbef6b195b7b35f146f17df723339b.jpg'
+                          - 'http://i.mycdn.me/i?r=AzEPZsRbOZEKgBhR0XGMT1RkNaYdgCNXPZqLheIqtYIYTqaKTM5SRkZCeTgDn6uOyic'
+                          - 'https://a.d-cd.net/941es-960.jpg'
+                        name: DJ
+                        description: Good DJ for your party!
+                        totalPrice: 2000
+                        isChosen: true
+                      - identifier: 596e65fd-141f-4295-824a-09f2f24f9cc8
+                        photo:
+                          - 'https://f11.pmo.ee/MmOaZrzTIrzK4YV2lDhpNwC7GBk=/1370x820/smart/nginx/o/2016/11/09/6055121t1hd5a2.jpg'
+                          - 'https://img.novosti-n.org/upload/ukraine/824889.jpg'
+                        name: Catering
+                        description: Wish any dish for your mega-party
+                        totalPrice: 4000
+                        isChosen: false
+        '500':
+          description: Internal Server Error
+      description: Обновление состояние бронирования
+      security:
+        - OAuth2: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date-time
+                duration:
+                  type: integer
+                  minimum: 0
+                  description: ' Длительность интервала бронирования в часах'
+              required:
+                - startDate
+                - duration
+            examples:
+              Example:
+                value:
+                  startDate: '2021-04-01 16:00:00.000'
+                  duration: 48
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+          multipart/form-data:
+            schema:
+              type: object
+              properties: {}
+          text/html:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+      tags:
+        - Booking
+components:
+  schemas:
+    Booking:
+      description: Информация о бронировании
+      type: object
+      properties:
+        bookingIdentifier:
+          type: string
+          format: uuid
+        organizerIdentifier:
+          type: string
+          format: uuid
+        place:
+          type: object
+          description: Бронируемая площадка
+          required:
+            - identifier
+            - name
+            - description
+            - ratingValue
+            - price
+            - bookingInterval
+            - owner
+            - openBookingIntervals
+          properties:
+            identifier:
+              type: string
+              format: uuid
+            photo:
+              type: array
+              uniqueItems: true
+              items:
+                type: string
+                format: uri
+            name:
+              type: string
+              minLength: 1
+              maxLength: 100
+            description:
+              type: string
+            ratingValue:
+              type: number
+              minimum: 1
+              maximum: 5
+              format: float
+            price:
+              type: number
+              minimum: 0
+              format: float
+            bookingInterval:
+              type: number
+              enum:
+                - 0
+                - 1
+                - 2
+              description: 'Тип интервала бронирования, может принимать одно из следующих значений: 0 - разовый платеж, 1 - день, 2 - час'
+            owner:
+              type: object
+              description: Владелец бронируемой площадки
+              required:
+                - identifier
+                - name
+                - contact
+              properties:
+                identifier:
+                  type: string
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 92
+                contact:
+                  type: array
+                  description: |-
+                    Массив текстовых представлений контактов:
+                    <тип_контакта>:<значение_контакта>
+                  items:
+                    type: string
+                    maxLength: 100
+            openBookingIntervals:
+              type: array
+              uniqueItems: true
+              minItems: 1
+              description: Список открытых интервалов бронирования
+              items:
+                type: object
+                properties:
+                  startDate:
+                    type: string
+                    format: date-time
+                  duration:
+                    type: integer
+                    minimum: 1
+                    description: ' Длительность доступного для бронирования интервала, задается как количество часов'
+                required:
+                  - startDate
+                  - duration
+      required:
+        - bookingIdentifier
+        - organizerIdentifier
+        - place
+    BookingState:
+      description: Состояние бронирования
+      type: object
+      properties:
+        bookingIdentifier:
+          type: string
+          format: uuid
+        startDate:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+          minimum: 0
+          description: Длительность бронирования в часах
+        totalPrice:
+          type: number
+          minimum: 0
+          format: float
+        additionalServices:
+          type: array
+          uniqueItems: true
+          description: Массив доступных для бронирования дополнительных услуг
+          items:
+            type: object
+            properties:
+              identifier:
+                type: string
+                minLength: 1
+              photo:
+                type: array
+                uniqueItems: true
+                items:
+                  type: string
+                  format: uri
+              name:
+                type: string
+                minLength: 1
+                maxLength: 100
+              description:
+                type: string
+              totalPrice:
+                type: number
+                minimum: 0
+                format: float
+              isChosen:
+                type: boolean
+                default: false
+                description: 'Флаг, показывающий, выбрана ли услуга в текущем бронировании'
+            required:
+              - identifier
+              - name
+              - description
+              - totalPrice
+              - isChosen
+      required:
+        - bookingIdentifier
+        - startDate
+        - duration
+        - totalPrice
+        - additionalServices
+    ReviewList:
+      title: ReviewList
+      type: object
+      properties:
+        id:
+          type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: ''
+          refreshUrl: ''
+          scopes: {}
