@@ -533,6 +533,7 @@ components:
     Booking:
       description: Информация о бронировании.
       type: object
+      title: Booking
       properties:
         bookingIdentifier:
           type: string
@@ -594,6 +595,7 @@ components:
               properties:
                 identifier:
                   type: string
+                  format: uuid
                 name:
                   type: string
                   minLength: 1
@@ -628,10 +630,10 @@ components:
         - bookingIdentifier
         - organizerIdentifier
         - place
-      title: Booking
     BookingState:
       description: Состояние бронирования.
       type: object
+      title: BookingState
       properties:
         bookingIdentifier:
           type: string
@@ -641,8 +643,8 @@ components:
           format: date-time
         duration:
           type: integer
-          minimum: 0
           description: Длительность бронирования в часах
+          minimum: 1
         totalPrice:
           type: number
           minimum: 0
@@ -656,7 +658,7 @@ components:
             properties:
               identifier:
                 type: string
-                minLength: 1
+                format: uuid
               photo:
                 type: array
                 uniqueItems: true
@@ -689,7 +691,6 @@ components:
         - duration
         - totalPrice
         - additionalServices
-      title: BookingState
     ReviewsPage:
       description: 'Страница списка отзывов к площадке для бронирования. Список выводится постранично, по 10 отзывов на странице.'
       type: object
@@ -725,13 +726,15 @@ components:
         page:
           type: integer
           description: Текущий номер страницы списка отзывов
+          minimum: 1
         pagesCount:
           type: integer
-          minimum: 0
           description: Общее число страниц в списке отзывов
+          minimum: 1
       required:
         - reviews
         - page
+        - pagesCount
   securitySchemes:
     OAuth2:
       type: oauth2
