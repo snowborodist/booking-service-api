@@ -2,6 +2,8 @@ openapi: 3.0.0
 tags:
   - name: Booking
     description: Управление бронированиями
+  - name: Message
+    description: Отправка и загрузка сообщений
   - name: Place
     description: Управление площадками для мероприятий
 info:
@@ -14,7 +16,8 @@ info:
     name: Александр Сафонов
     email: snowborodist@gmail.com
 servers:
-  - url: 'https://someaddress:3000'
+  - url: 'https://localhost:3000'
+    description: Develop
 paths:
   '/booking/{identifier}':
     parameters:
@@ -65,7 +68,7 @@ paths:
         '404':
           description: Booking Not Found
       operationId: get-booking-identifier
-      description: 'Возвращает объект, содержащий информацию о бронировании'
+      description: 'Возвращает объект, содержащий информацию о бронировании.'
       security:
         - OAuth2: []
       x-internal: false
@@ -78,7 +81,7 @@ paths:
           description: OK
         '404':
           description: Booking Not Found
-      description: Для удаления необходимо указать уникальный идентификатор бронирования
+      description: Для удаления необходимо указать уникальный идентификатор бронирования.
       security:
         - OAuth2: []
       parameters: []
@@ -124,7 +127,7 @@ paths:
                           duration: '48'
         '500':
           description: Internal Server Error
-      description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий информацию о созданном бронировании'
+      description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий информацию о созданном бронировании.'
       security:
         - OAuth2: []
       requestBody:
@@ -205,7 +208,7 @@ paths:
                 type: object
                 properties: {}
       operationId: get-booking-identifier-state
-      description: 'Возвращает объект, содержащий состояние бронирования'
+      description: 'Возвращает объект, содержащий состояние бронирования.'
       security:
         - OAuth2: []
     put:
@@ -245,7 +248,7 @@ paths:
                         isChosen: false
         '500':
           description: Internal Server Error
-      description: 'При успешном выполнении запроса возвращает объект, содержащий новое состояние бронирования'
+      description: 'При успешном выполнении запроса возвращает объект, содержащий новое состояние бронирования.'
       security:
         - OAuth2: []
       requestBody:
@@ -316,13 +319,13 @@ paths:
                         dateCreated: '2019-08-24T17:03:22Z'
                         reviewBody: 'Место так себе, не особо понравилось: было скучно и еду принесли холодную!'
                     page: 1
-                    pagesVount: 10
+                    pagesCount: 10
         '400':
           description: Invalid Page Value
         '404':
           description: Place Not Found
       operationId: get-place-identifier-reviews
-      description: 'Возвращает объект, содержащий страницу списка отзывов к площадке для мероприятий'
+      description: 'Возвращает объект, содержащий страницу списка отзывов к площадке для мероприятий.'
       parameters:
         - schema:
             type: integer
@@ -391,7 +394,7 @@ paths:
           name: additionalServiceIdentifier
           description: Уникальный идентификатор добавляемой дополнительной услуги
           required: true
-      description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий новое состояние бронирования'
+      description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий новое состояние бронирования.'
     delete:
       summary: Убрать дополнительную услугу из бронирования
       operationId: delete-booking-identifier-service
@@ -442,7 +445,7 @@ paths:
           required: true
       security:
         - OAuth2: []
-      description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий новое состояние бронирования'
+      description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий новое состояние бронирования.'
   '/booking/{identifier}/commit':
     parameters:
       - schema:
@@ -461,9 +464,50 @@ paths:
           description: Booking Already Commited
         '404':
           description: Booking Not Found
-      description: 'Запрос позволяет пользователю подтвердить бронирование. Если бронирование уже было подтверждено, то будет возвращен код ответа 304'
+      description: 'Запрос позволяет пользователю подтвердить бронирование. Если бронирование уже было подтверждено, то будет возвращен код ответа 304.'
       security:
         - OAuth2: []
+      tags:
+        - Booking
+  /message:
+    post:
+      summary: Отправить сообщение
+      operationId: post-message
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: User Not Found
+      tags:
+        - Message
+      description: Запрос позволяет пользователю отправить сообщение через сервис.
+      security:
+        - OAuth2: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                senderIdentifier:
+                  type: string
+                  format: uuid
+                receiverIdentifier:
+                  type: string
+                  format: uuid
+                messageText:
+                  type: string
+                  minLength: 1
+              required:
+                - senderIdentifier
+                - receiverIdentifier
+                - messageText
+            examples:
+              Example:
+                value:
+                  senderIdentifier: 97240fea-f7e3-4718-9337-39e295de9679
+                  receiverIdentifier: 76c1e427-3520-4cb3-a10d-a88c2fbc0cad
+                  messageText: 'Привет, как дела?'
 components:
   schemas:
     Booking:
@@ -659,7 +703,7 @@ components:
         page:
           type: integer
           description: Текущий номер страницы списка отзывов
-        pagesVount:
+        pagesCount:
           type: integer
           minimum: 0
           description: Общее число страниц в списке отзывов
