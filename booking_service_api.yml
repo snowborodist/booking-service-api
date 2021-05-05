@@ -9,8 +9,7 @@ tags:
 info:
   title: Сервис бронирований
   version: '0.2'
-  description: |-
-    Данный сервис предназначен для управления бронированиями.
+  description: Данный сервис предназначен для управления бронированиями.
   contact:
     name: Александр Сафонов
     email: snowborodist@gmail.com
@@ -513,6 +512,7 @@ paths:
         name: identifier
         in: path
         required: true
+        description: Уникальный идентификатор бронирования
     put:
       summary: Отмена бронирования
       operationId: put-booking-identifier-cancel
