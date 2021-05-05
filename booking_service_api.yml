@@ -212,7 +212,7 @@ paths:
       security:
         - OAuth2: []
     put:
-      summary: Обновление интервалов бронирования
+      summary: Обновление интервала бронирования
       operationId: put-booking-identifier-state
       responses:
         '200':
@@ -344,7 +344,7 @@ paths:
         required: true
         description: Уникальный идентификатор бронирования
     post:
-      summary: Добавить услугу к бронированию
+      summary: Добавление услуги к бронированию
       operationId: post-booking-identifier-service
       responses:
         '201':
@@ -395,7 +395,7 @@ paths:
           required: true
       description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий новое состояние бронирования.'
     delete:
-      summary: Убрать дополнительную услугу из бронирования
+      summary: Удаление дополнительной услуги из бронирования
       operationId: delete-booking-identifier-service
       responses:
         '200':
@@ -454,7 +454,7 @@ paths:
         required: true
         description: Уникальный идентификатор бронирования
     post:
-      summary: Подтвердить бронирование
+      summary: Подтверждение бронирования
       operationId: post-booking-identifier-commit
       responses:
         '200':
@@ -470,7 +470,7 @@ paths:
         - Booking
   /message:
     post:
-      summary: Отправить сообщение
+      summary: Отправка сообщения
       operationId: post-message
       responses:
         '200':
@@ -672,6 +672,7 @@ components:
     ReviewsPage:
       description: 'Страница списка отзывов к площадке для бронирования. Список выводится постранично, по 10 отзывов на странице.'
       type: object
+      title: ReviewsPage
       properties:
         reviews:
           type: array
@@ -688,6 +689,7 @@ components:
               author:
                 type: string
                 minLength: 1
+                maxLength: 92
               dateCreated:
                 type: string
                 format: date-time
@@ -709,8 +711,6 @@ components:
       required:
         - reviews
         - page
-        - pagesVount
-      title: ReviewsPage
   securitySchemes:
     OAuth2:
       type: oauth2
