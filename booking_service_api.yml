@@ -1,7 +1,9 @@
 openapi: 3.0.0
 tags:
   - name: Booking
-    description: Создание и управление бронированиями
+    description: Управление бронированиями
+  - name: Place
+    description: Управление площадками для мероприятий
 info:
   title: Booking Service
   version: '1.0'
@@ -18,7 +20,7 @@ paths:
         required: true
         description: Уникальный идентификатор бронирования
     get:
-      summary: Бронирование
+      summary: Получение информации о бронировании
       tags:
         - Booking
       responses:
@@ -58,20 +60,20 @@ paths:
         '404':
           description: Booking Not Found
       operationId: get-booking-identifier
-      description: Получение информации о бронировании по его идентификатору
+      description: 'Возвращает объект, содержащий информацию о бронировании'
       security:
         - OAuth2: []
       x-internal: false
       parameters: []
     delete:
-      summary: ''
+      summary: Удаление бронирования
       operationId: delete-booking-identifier
       responses:
         '200':
           description: OK
         '404':
           description: Booking Not Found
-      description: Удаление бронирования
+      description: Для удаления необходимо указать уникальный идентификатор бронирования
       security:
         - OAuth2: []
       parameters: []
@@ -79,7 +81,7 @@ paths:
         - Booking
   /booking:
     post:
-      summary: Бронирование
+      summary: Добавление нового бронирования
       operationId: post-booking
       responses:
         '201':
@@ -117,7 +119,7 @@ paths:
                           duration: '48'
         '500':
           description: Internal Server Error
-      description: Создание нового бронирования. В случае успешного выполнения запроса в теле ответа возвращается объект с информацией о созданном бронировании
+      description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий информацию о созданном бронировании'
       security:
         - OAuth2: []
       requestBody:
@@ -198,11 +200,11 @@ paths:
                 type: object
                 properties: {}
       operationId: get-booking-identifier-state
-      description: Получение информации о состоянии бронирования по его уникальному идентификатору
+      description: 'Возвращает объект, содержащий статус бронирования'
       security:
         - OAuth2: []
     put:
-      summary: Обновление состояния бронирования
+      summary: Обновление интервалов бронирования
       operationId: put-booking-identifier-state
       responses:
         '200':
@@ -238,7 +240,7 @@ paths:
                         isChosen: false
         '500':
           description: Internal Server Error
-      description: Обновление состояние бронирования
+      description: 'При успешном выполнении запроса возвращает объект, содержащий новое состояние бронирования'
       security:
         - OAuth2: []
       requestBody:
@@ -277,10 +279,59 @@ paths:
         description: ''
       tags:
         - Booking
+  '/place/{identifier}/reviews':
+    parameters:
+      - schema:
+          type: string
+        name: identifier
+        in: path
+        required: true
+        description: Уникальный идентификатор площадки для мероприятий
+    get:
+      summary: Получение отзывов к площадке
+      tags:
+        - Place
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewsPage'
+              examples:
+                Example:
+                  value:
+                    reviews:
+                      - identifier: c1d7bf27-26ec-43d4-a6bf-e637203c1e9c
+                        author: Алексей Петров
+                        dateCreated: '2019-08-24T14:15:22Z'
+                        reviewBody: 'Место очень понравилось: было весело и очень вкусно!'
+                      - identifier: cc8f7e5a-30a3-4977-86ac-9a685b025ad1
+                        author: Ульяна Иванова
+                        dateCreated: '2019-08-24T17:03:22Z'
+                        reviewBody: 'Место так себе, не особо понравилось: было скучно и еду принесли холодную!'
+                    page: 1
+                    pagesVount: 10
+        '400':
+          description: Invalid Page Value
+        '404':
+          description: Place Not Found
+      operationId: get-place-identifier-reviews
+      description: 'Возвращает объект, содержащий страницу списка отзывов к площадке для мероприятий'
+      parameters:
+        - schema:
+            type: integer
+            default: '1'
+          in: query
+          name: page
+          description: ' Номер страницы списка отзывов'
+          required: true
+      security:
+        - OAuth2: []
 components:
   schemas:
     Booking:
-      description: Информация о бронировании
+      description: Информация о бронировании.
       type: object
       properties:
         bookingIdentifier:
@@ -377,8 +428,9 @@ components:
         - bookingIdentifier
         - organizerIdentifier
         - place
+      title: Booking
     BookingState:
-      description: Состояние бронирования
+      description: Состояние бронирования.
       type: object
       properties:
         bookingIdentifier:
@@ -437,12 +489,49 @@ components:
         - duration
         - totalPrice
         - additionalServices
-    ReviewList:
-      title: ReviewList
+      title: BookingState
+    ReviewsPage:
+      description: 'Страница списка отзывов к площадке для бронирования. Список выводится постранично, по 10 отзывов на странице.'
       type: object
       properties:
-        id:
-          type: string
+        reviews:
+          type: array
+          uniqueItems: true
+          minItems: 0
+          description: Отзыв к площадке
+          items:
+            type: object
+            description: Отзыв к площадке для бронирования
+            properties:
+              identifier:
+                type: string
+                format: uuid
+              author:
+                type: string
+                minLength: 1
+              dateCreated:
+                type: string
+                format: date-time
+              reviewBody:
+                type: string
+                minLength: 1
+            required:
+              - identifier
+              - author
+              - dateCreated
+              - reviewBody
+        page:
+          type: integer
+          description: Текущий номер страницы списка отзывов
+        pagesVount:
+          type: integer
+          minimum: 0
+          description: Общее число страниц в списке отзывов
+      required:
+        - reviews
+        - page
+        - pagesVount
+      title: ReviewsPage
   securitySchemes:
     OAuth2:
       type: oauth2
