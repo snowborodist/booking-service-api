@@ -10,8 +10,7 @@ info:
   title: Сервис бронирований
   version: '0.2'
   description: |-
-    Данный сервис предназначен для работы с бронированиями.
-    Связанный проект Confluence: https://snowbro.atlassian.net/wiki/spaces/SBAHWC/overview
+    Данный сервис предназначен для управления бронированиями.
   contact:
     name: Александр Сафонов
     email: snowborodist@gmail.com
@@ -507,6 +506,28 @@ paths:
                   senderIdentifier: 97240fea-f7e3-4718-9337-39e295de9679
                   receiverIdentifier: 76c1e427-3520-4cb3-a10d-a88c2fbc0cad
                   messageText: 'Привет, как дела?'
+  '/booking/{identifier}/cancel':
+    parameters:
+      - schema:
+          type: string
+        name: identifier
+        in: path
+        required: true
+    put:
+      summary: Отмена бронирования
+      operationId: put-booking-identifier-cancel
+      responses:
+        '200':
+          description: OK
+        '304':
+          description: Booking Already Canceled
+        '404':
+          description: Booking Not Found
+      description: 'Запрос позволяет пользователю отменить бронирование. Если бронирование уже было отменено, то будет возвращен код ответа 304.'
+      security:
+        - OAuth2: []
+      tags:
+        - Booking
 components:
   schemas:
     Booking:
