@@ -5,11 +5,16 @@ tags:
   - name: Place
     description: Управление площадками для мероприятий
 info:
-  title: Booking Service
-  version: '1.0'
-  description: ''
+  title: Сервис бронирований
+  version: '0.2'
+  description: |-
+    Данный сервис предназначен для работы с бронированиями: создания, удаления и изменения их состояний.
+    Связанный проект Confluence: https://snowbro.atlassian.net/wiki/spaces/SBAHWC/overview
+  contact:
+    name: Александр Сафонов
+    email: snowborodist@gmail.com
 servers:
-  - url: 'http://localhost:3000'
+  - url: 'https://someaddress:3000'
 paths:
   '/booking/{identifier}':
     parameters:
@@ -200,7 +205,7 @@ paths:
                 type: object
                 properties: {}
       operationId: get-booking-identifier-state
-      description: 'Возвращает объект, содержащий статус бронирования'
+      description: 'Возвращает объект, содержащий состояние бронирования'
       security:
         - OAuth2: []
     put:
@@ -326,6 +331,137 @@ paths:
           name: page
           description: ' Номер страницы списка отзывов'
           required: true
+      security:
+        - OAuth2: []
+  '/booking/{identifier}/service':
+    parameters:
+      - schema:
+          type: string
+        name: identifier
+        in: path
+        required: true
+        description: Уникальный идентификатор бронирования
+    post:
+      summary: Добавить услугу к бронированию
+      operationId: post-booking-identifier-service
+      responses:
+        '201':
+          description: Service Added To Booking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingState'
+              examples:
+                Example:
+                  value:
+                    bookingIdentifier: 409d0818-73bf-4a1f-a23b-81505778c663
+                    startDate: '2019-08-24T17:03:22Z'
+                    duration: 48
+                    totalPrice: 26000
+                    additionalServices:
+                      - identifier: a5f95893-353b-4118-8ab7-46f406fc382c
+                        photo:
+                          - 'https://www.meme-arsenal.com/memes/77cbef6b195b7b35f146f17df723339b.jpg'
+                          - 'http://i.mycdn.me/i?r=AzEPZsRbOZEKgBhR0XGMT1RkNaYdgCNXPZqLheIqtYIYTqaKTM5SRkZCeTgDn6uOyic'
+                          - 'https://a.d-cd.net/941es-960.jpg'
+                        name: DJ
+                        description: Good DJ for your party!
+                        totalPrice: 2000
+                        isChosen: true
+                      - identifier: 596e65fd-141f-4295-824a-09f2f24f9cc8
+                        photo:
+                          - 'https://f11.pmo.ee/MmOaZrzTIrzK4YV2lDhpNwC7GBk=/1370x820/smart/nginx/o/2016/11/09/6055121t1hd5a2.jpg'
+                          - 'https://img.novosti-n.org/upload/ukraine/824889.jpg'
+                        name: Catering
+                        description: Wish any dish for your mega-party
+                        totalPrice: 4000
+                        isChosen: false
+        '404':
+          description: Booking Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Booking
+      security:
+        - OAuth2: []
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: additionalServiceIdentifier
+          description: Уникальный идентификатор добавляемой дополнительной услуги
+          required: true
+      description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий новое состояние бронирования'
+    delete:
+      summary: Убрать дополнительную услугу из бронирования
+      operationId: delete-booking-identifier-service
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingState'
+              examples:
+                Example:
+                  value:
+                    bookingIdentifier: 409d0818-73bf-4a1f-a23b-81505778c663
+                    startDate: '2019-08-24T17:03:22Z'
+                    duration: 48
+                    totalPrice: 26000
+                    additionalServices:
+                      - identifier: a5f95893-353b-4118-8ab7-46f406fc382c
+                        photo:
+                          - 'https://www.meme-arsenal.com/memes/77cbef6b195b7b35f146f17df723339b.jpg'
+                          - 'http://i.mycdn.me/i?r=AzEPZsRbOZEKgBhR0XGMT1RkNaYdgCNXPZqLheIqtYIYTqaKTM5SRkZCeTgDn6uOyic'
+                          - 'https://a.d-cd.net/941es-960.jpg'
+                        name: DJ
+                        description: Good DJ for your party!
+                        totalPrice: 2000
+                        isChosen: true
+                      - identifier: 596e65fd-141f-4295-824a-09f2f24f9cc8
+                        photo:
+                          - 'https://f11.pmo.ee/MmOaZrzTIrzK4YV2lDhpNwC7GBk=/1370x820/smart/nginx/o/2016/11/09/6055121t1hd5a2.jpg'
+                          - 'https://img.novosti-n.org/upload/ukraine/824889.jpg'
+                        name: Catering
+                        description: Wish any dish for your mega-party
+                        totalPrice: 4000
+                        isChosen: false
+        '404':
+          description: Booking Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Booking
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: additionalServiceIdentifier
+          description: Уникальный идентификатор убираемой из бронирования услуги
+          required: true
+      security:
+        - OAuth2: []
+      description: 'При успешном выполнении запроса в теле ответа возвращается объект, содержащий новое состояние бронирования'
+  '/booking/{identifier}/commit':
+    parameters:
+      - schema:
+          type: string
+        name: identifier
+        in: path
+        required: true
+        description: Уникальный идентификатор бронирования
+    post:
+      summary: Подтвердить бронирование
+      operationId: post-booking-identifier-commit
+      responses:
+        '200':
+          description: OK
+        '304':
+          description: Booking Already Commited
+        '404':
+          description: Booking Not Found
+      description: 'Запрос позволяет пользователю подтвердить бронирование. Если бронирование уже было подтверждено, то будет возвращен код ответа 304'
       security:
         - OAuth2: []
 components:
